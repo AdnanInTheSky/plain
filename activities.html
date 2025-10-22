@@ -1,159 +1,53 @@
+<!-- activities.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Activities | NGO Impact</title>
-  <meta name="description" content="Latest community initiatives and impact stories."/>
+  <title>Activities</title>
   <style>
-    :root { --green: #2e7d32; --blue: #1976d2; --light: #f5f5f5; --dark: #333; }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: system-ui, sans-serif; line-height: 1.6; color: var(--dark); background: var(--light); }
-    header { background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
-    nav { display: flex; justify-content: space-between; align-items: center; padding: 1rem; }
-    .logo { font-weight: bold; color: var(--green); font-size: 1.4rem; text-decoration: none; }
-    .nav-links { display: flex; gap: 1.5rem; list-style: none; }
-    .nav-links a { text-decoration: none; color: var(--dark); }
-    .hamburger { display: none; flex-direction: column; cursor: pointer; }
-    .hamburger span { width: 25px; height: 3px; background: var(--dark); margin: 3px 0; }
-    main { padding: 2rem 1rem; max-width: 1200px; margin: 0 auto; }
-    .filters { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem; align-items: center; }
-    .filters input, .filters select { padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px; }
-    .articles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; }
-    .article-card { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-    .article-card img { width: 100%; height: 200px; object-fit: cover; }
-    .card-content { padding: 1.2rem; }
-    .card-content h3 { margin-bottom: 0.5rem; color: var(--green); }
-    .card-meta { color: #666; font-size: 0.9rem; margin-bottom: 0.8rem; }
-    .card-content p { margin-bottom: 1rem; }
-    .btn { display: inline-block; color: white; background: var(--blue); padding: 0.4rem 0.8rem; text-decoration: none; border-radius: 4px; font-size: 0.9rem; }
-    footer { text-align: center; padding: 2rem 1rem; color: #666; border-top: 1px solid #eee; }
-    @media (max-width: 768px) {
-      .nav-links { display: none; position: absolute; top: 100%; left: 0; width: 100%; background: white; flex-direction: column; padding: 1rem; gap: 1rem; }
-      .nav-links.active { display: flex; }
-      .hamburger { display: flex; }
-      .filters { flex-direction: column; align-items: stretch; }
-    }
+    body { font-family: sans-serif; padding: 2rem; }
+    .card { border: 1px solid #ccc; padding: 1rem; margin: 1rem 0; max-width: 600px; }
+    .card img { max-width: 100%; height: 150px; object-fit: cover; }
   </style>
 </head>
 <body>
-  <header>
-    <nav aria-label="Main navigation">
-      <a href="index.html" class="logo">NGO Impact</a>
-      <ul class="nav-links" id="navLinks">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="activities.html">Activities</a></li>
-        <li><a href="team.html">Team</a></li>
-        <li><a href="about.html">About</a></li>
-        <li><a href="contact.html">Contact</a></li>
-      </ul>
-      <div class="hamburger" id="hamburger" tabindex="0" aria-label="Toggle navigation">
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
-    </nav>
-  </header>
-
-  <main>
-    <h1>Our Activities</h1>
-    <div class="filters">
-      <input type="text" id="searchInput" placeholder="Search articles..." aria-label="Search articles"/>
-      <select id="categoryFilter" aria-label="Filter by category">
-        <option value="">All Categories</option>
-        <option value="Environment">Environment</option>
-        <option value="Education">Education</option>
-      </select>
-      <select id="sortOrder" aria-label="Sort articles">
-        <option value="newest">Newest First</option>
-        <option value="oldest">Oldest First</option>
-      </select>
-    </div>
-    <div class="articles-grid" id="articlesContainer" aria-live="polite"></div>
-  </main>
-
-  <footer>
-    <p>&copy; 2025 NGO Impact</p>
-  </footer>
+  <h1>Activities</h1>
+  <div id="articles">Loading...</div>
 
   <script>
-    // Mobile nav toggle
-    const hamburger = document.getElementById('hamburger');
-    const navLinks = document.getElementById('navLinks');
-    hamburger.addEventListener('click', () => navLinks.classList.toggle('active'));
-    hamburger.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        navLinks.classList.toggle('active');
-      }
-    });
+    // Since we can't list directory contents, we'll assume known slugs
+    // OR: later add a build step to generate a JSON index
+    const knownSlugs = ['first-article', 'second-article']; // Update manually or via script
 
-    // Simple markdown-to-HTML (basic)
-    function markdownToHtml(md) {
-      return md
-        .replace(/^### (.*$)/gm, '<h3>$1</h3>')
-        .replace(/^## (.*$)/gm, '<h2>$1</h2>')
-        .replace(/^# (.*$)/gm, '<h1>$1</h1>')
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" loading="lazy">')
-        .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>')
-        .replace(/^(?!<[h|p|img|a|ul|ol|li]).*$/gm, '<p>$&</p>');
-    }
-
-    // Load and render articles
-    async function loadArticles() {
-      try {
-        const res = await fetch('data/articles.json');
-        if (!res.ok) throw new Error('Failed to load articles');
-        const articles = await res.json();
-        renderArticles(articles);
-      } catch (err) {
-        document.getElementById('articlesContainer').innerHTML = `<p>Error loading articles: ${err.message}</p>`;
-      }
-    }
-
-    function renderArticles(articles) {
-      const container = document.getElementById('articlesContainer');
-      const search = document.getElementById('searchInput').value.toLowerCase();
-      const category = document.getElementById('categoryFilter').value;
-      const sort = document.getElementById('sortOrder').value;
-
-      let filtered = articles.filter(a =>
-        (a.title.toLowerCase().includes(search) || a.excerpt.toLowerCase().includes(search)) &&
-        (!category || a.category === category)
-      );
-
-      filtered.sort((a, b) => {
-        const dateA = new Date(a.date);
-        const dateB = new Date(b.date);
-        return sort === 'newest' ? dateB - dateA : dateA - dateB;
-      });
-
-      if (filtered.length === 0) {
-        container.innerHTML = '<p>No articles found.</p>';
-        return;
-      }
-
-      container.innerHTML = filtered.map(a => `
-        <article class="article-card" role="article">
-          <img src="${a.image}" alt="${a.title}" loading="lazy" />
-          <div class="card-content">
-            <div class="card-meta">${a.date} • ${a.category}</div>
-            <h3>${a.title}</h3>
-            <p>${a.excerpt}</p>
-            <a href="article.html?id=${a.id}" class="btn">Read More</a>
-          </div>
-        </article>
+    Promise.all(
+      knownSlugs.map(slug =>
+        fetch(`content/articles/${slug}.md`)
+          .then(res => res.text())
+          .then(md => {
+            const parts = md.split(/---\s*/);
+            const yaml = parts[1] || '';
+            const meta = {};
+            yaml.split('\n').forEach(line => {
+              if (line.includes(':')) {
+                const [key, value] = line.split(':').map(s => s.trim());
+                meta[key] = value.replace(/^['"]|['"]$/g, '');
+              }
+            });
+            return { slug, ...meta };
+          })
+      )
+    )
+    .then(articles => {
+      document.getElementById('articles').innerHTML = articles.map(a => `
+        <div class="card">
+          <img src="${a.image}" alt="${a.title}">
+          <h2>${a.title}</h2>
+          <p>${a.date}</p>
+          <a href="article.html?slug=${a.slug}">Read more</a>
+        </div>
       `).join('');
-    }
-
-    // Attach event listeners
-    document.getElementById('searchInput').addEventListener('input', loadArticles);
-    document.getElementById('categoryFilter').addEventListener('change', loadArticles);
-    document.getElementById('sortOrder').addEventListener('change', loadArticles);
-
-    // Initial load
-    document.addEventListener('DOMContentLoaded', loadArticles);
+    });
   </script>
 </body>
 </html>
