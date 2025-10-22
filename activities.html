@@ -1,4 +1,3 @@
-<!-- activities.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,9 +15,8 @@
   <div id="articles">Loading...</div>
 
   <script>
-    // Since we can't list directory contents, we'll assume known slugs
-    // OR: later add a build step to generate a JSON index
-    const knownSlugs = ['first-article', 'second-article']; // Update manually or via script
+    // List all articles manually (slug = filename without .md)
+    const knownSlugs = ['first-article', 'second-article'];
 
     Promise.all(
       knownSlugs.map(slug =>
@@ -37,9 +35,9 @@
             return { slug, ...meta };
           })
       )
-    )
-    .then(articles => {
-      document.getElementById('articles').innerHTML = articles.map(a => `
+    ).then(articles => {
+      const container = document.getElementById('articles');
+      container.innerHTML = articles.map(a => `
         <div class="card">
           <img src="${a.image}" alt="${a.title}">
           <h2>${a.title}</h2>
@@ -47,6 +45,8 @@
           <a href="article.html?slug=${a.slug}">Read more</a>
         </div>
       `).join('');
+    }).catch(err => {
+      document.getElementById('articles').innerHTML = `<p>Error loading articles: ${err.message}</p>`;
     });
   </script>
 </body>
