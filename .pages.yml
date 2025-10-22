@@ -1,10 +1,12 @@
+# ===== MEDIA CONFIG =====
 media:
   input: content/images
-  output: /content/images
+  output: content/images
   extensions: [jpg, jpeg, png, webp, gif]
 
-content:
-  # ===== ARTICLES (using 'markdown' format to show body editor) =====
+# ===== CONTENT COLLECTIONS =====
+collections:
+  # ===== ARTICLES =====
   - name: articles
     label: Articles
     type: collection
@@ -20,6 +22,7 @@ content:
         label: Slug
         type: string
         required: true
+        hint: "Only letters, numbers, hyphens, and underscores"
       - name: excerpt
         label: Excerpt
         type: text
@@ -36,10 +39,10 @@ content:
       - name: image
         label: Featured Image
         type: image
-        media: true
         required: true
+        media_folder: "content/images/articles"
 
-  # ===== TEAM (unchanged, known to work) =====
+  # ===== TEAM MEMBERS =====
   - name: team
     label: Team Members
     type: collection
@@ -66,8 +69,8 @@ content:
       - name: photo
         label: Photo
         type: image
-        media: true
         required: false
+        media_folder: "content/images/team"
       - name: order
         label: Order
         type: number
