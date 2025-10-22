@@ -1,7 +1,7 @@
 media:
   input: content/images
   output: /content/images
-  extensions: [jpg, jpeg, png, webp]
+  extensions: [jpg, jpeg, png, webp, gif]
 
 content:
   - name: articles
@@ -38,7 +38,7 @@ content:
           - Community
         required: true
       - name: image
-        label: Image
+        label: Featured Image
         type: image
         media: true
         required: true
