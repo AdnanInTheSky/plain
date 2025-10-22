@@ -1,62 +1,47 @@
-# .pages.yml
-# Configuration for PagesCMS (https://pagescms.dev)
-
-# Media settings: where to store and serve uploaded images
 media:
-  input: content/images  # Relative path in your repo
-  output: /content/images # Public URL path for images in your site
-  extensions: [jpg, jpeg, png, webp, gif] # Allowed file types
+  input: content/images
+  output: /content/images
+  extensions: [jpg, jpeg, png, webp, gif]
 
-# Content collections: Define what types of content can be managed
 content:
-  # Collection: Articles (for the /activities page)
   - name: articles
     label: Articles
     type: collection
     path: content/articles
-    format: yaml-frontmatter # Content is YAML frontmatter + Markdown body
-    filename: "{slug}.md" # Filename will be based on the 'slug' field
+    format: yaml-frontmatter
+    filename: "{slug}.md"
     fields:
       - name: title
         label: Title
         type: string
         required: true
       - name: slug
-        label: Slug (URL-friendly ID)
+        label: Slug
         type: string
         required: true
-        description: "Use lowercase letters, numbers, and hyphens only. e.g., 'my-article-title'"
       - name: excerpt
         label: Excerpt
         type: text
         required: true
-        description: "A short summary for the article listing page."
       - name: date
-        label: Publish Date
+        label: Date
         type: date
         required: true
-        format: "YYYY-MM-DD"
-        description: "Format: YYYY-MM-DD"
       - name: category
         label: Category
-        type: select # This field type is safe and works correctly
-        required: true
-        options: # Define the options as a list of strings
+        type: select
+        options:
           - Environment
           - Education
           - Health
           - Community
-          - Other # Add more categories as needed
-        default: Other
-        description: "Choose the main category for this article."
+        required: true
       - name: image
         label: Featured Image
         type: image
-        media: true # Allows uploading via PagesCMS media browser
+        media: true
         required: true
-        description: "The main image displayed for this article."
 
-  # Collection: Team Members (for the /team page)
   - name: team
     label: Team Members
     type: collection
@@ -72,26 +57,20 @@ content:
         label: Slug
         type: string
         required: true
-        description: "Use lowercase letters, numbers, and hyphens only. e.g., 'john-doe'"
       - name: role
-        label: Role / Title
+        label: Role
         type: string
         required: true
       - name: bio
-        label: Short Bio
+        label: Bio
         type: text
         required: true
-        description: "A brief description of the team member."
       - name: photo
         label: Photo
         type: image
         media: true
-        required: false # Not all team members need a photo
-        description: "Upload a profile photo for this member."
+        required: false
       - name: order
-        label: Display Order
+        label: Order
         type: number
         default: 999
-        description: "Lower numbers appear first. e.g., 1, 2, 3..."
-
- 
