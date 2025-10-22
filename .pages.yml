@@ -4,6 +4,7 @@ media:
   extensions: [jpg, jpeg, png, webp, gif]
 
 content:
+  # ===== ARTICLES (now matches TEAM structure) =====
   - name: articles
     label: Articles
     type: collection
@@ -27,21 +28,19 @@ content:
         label: Date
         type: date
         required: true
+      # ✅ CHANGED: category is now a STRING (like 'role' in team)
       - name: category
         label: Category
-        type: select
-        options:
-          - Environment
-          - Education
-          - Health
-          - Community
+        type: string  # ← NOT 'select'
         required: true
+        description: "e.g., Environment, Education, Health"
       - name: image
         label: Featured Image
         type: image
         media: true
         required: true
 
+  # ===== TEAM (unchanged, known to work) =====
   - name: team
     label: Team Members
     type: collection
