@@ -1,5 +1,5 @@
 # .pages.yml
-# Configuration for PagesCMS (https://pagescms.dev)
+# Place this file in the ROOT of your GitHub repository
 
 media:
   input: content/images
@@ -7,7 +7,7 @@ media:
   extensions: [jpg, jpeg, png, webp, gif]
 
 content:
-  # Collection: Articles (for Activities page)
+  # ===== ARTICLES (for /activities and /article/:slug) =====
   - name: articles
     label: Articles
     type: collection
@@ -20,14 +20,15 @@ content:
         type: string
         required: true
       - name: slug
-        label: Slug (URL-friendly ID)
+        label: Slug (URL ID)
         type: string
         required: true
-        description: "Used in URL: /article/your-slug"
+        description: "Use lowercase letters and hyphens only (e.g., river-cleanup)"
       - name: excerpt
         label: Excerpt
         type: text
         required: true
+        description: "Short summary shown in article listings"
       - name: date
         label: Publish Date
         type: date
@@ -47,12 +48,9 @@ content:
         type: image
         media: true
         required: true
-      - name: body
-        label: Content
-        type: rich-text
-        required: true
+        description: "Image shown in listings and article header"
 
-  # Collection: Team Members
+  # ===== TEAM MEMBERS (for /team page) =====
   - name: team
     label: Team Members
     type: collection
@@ -65,10 +63,10 @@ content:
         type: string
         required: true
       - name: slug
-        label: Slug (URL-friendly ID)
+        label: Slug
         type: string
         required: true
-        description: "Used for sorting; not in URL (we use single /team page)"
+        description: "Used for filename and sorting (e.g., ayesha-rahman)"
       - name: role
         label: Role / Title
         type: string
@@ -86,8 +84,6 @@ content:
         label: Display Order
         type: number
         default: 999
-        description: "Lower numbers appear first"
+        description: "Lower numbers appear first (e.g., 1, 2, 3)"
 
-# Optional: Hide Settings tab (since we don't need it)
-settings:
-  hide: false
+ 
