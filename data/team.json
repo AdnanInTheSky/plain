@@ -1,0 +1,18 @@
+[
+  {
+    "name": "Ayesha Rahman",
+    "role": "Project Coordinator",
+    "bio": "10+ years in community development and environmental advocacy.",
+    "photo": "content/images/ayesha.jpg",
+    "order": 1,
+    "slug": "ayesha-rahman"
+  },
+  {
+    "name": "Rafiqul Islam",
+    "role": "Volunteer Lead",
+    "bio": "Passionate about youth empowerment.",
+    "photo": "content/images/rafiq.jpg",
+    "order": 2,
+    "slug": "rafiqul-islam"
+  }
+]

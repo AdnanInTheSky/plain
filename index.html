@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NGO Impact | Home</title>
+  <meta name="description" content="Driving community change through education and environment."/>
+  <meta property="og:title" content="NGO Impact"/>
+  <meta property="og:description" content="Community-driven initiatives for a sustainable future."/>
+  <style>
+    :root { --green: #2e7d32; --blue: #1976d2; --light: #f5f5f5; --dark: #333; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; line-height: 1.6; color: var(--dark); background: var(--light); }
+    header { background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
+    nav { display: flex; justify-content: space-between; align-items: center; padding: 1rem; }
+    .logo { font-weight: bold; color: var(--green); font-size: 1.4rem; text-decoration: none; }
+    .nav-links { display: flex; gap: 1.5rem; list-style: none; }
+    .nav-links a { text-decoration: none; color: var(--dark); }
+    .nav-links a:hover { color: var(--blue); }
+    .hamburger { display: none; flex-direction: column; cursor: pointer; }
+    .hamburger span { width: 25px; height: 3px; background: var(--dark); margin: 3px 0; }
+    main { padding: 2rem 1rem; max-width: 1200px; margin: 0 auto; }
+    .hero { text-align: center; margin-bottom: 3rem; }
+    .hero h1 { font-size: 2.5rem; color: var(--green); margin-bottom: 1rem; }
+    .hero p { font-size: 1.2rem; max-width: 700px; margin: 0 auto; }
+    .btn { display: inline-block; background: var(--blue); color: white; padding: 0.6rem 1.2rem; text-decoration: none; border-radius: 4px; margin-top: 1rem; }
+    footer { text-align: center; padding: 2rem 1rem; color: #666; border-top: 1px solid #eee; }
+    @media (max-width: 768px) {
+      .nav-links { display: none; position: absolute; top: 100%; left: 0; width: 100%; background: white; flex-direction: column; padding: 1rem; gap: 1rem; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+      .nav-links.active { display: flex; }
+      .hamburger { display: flex; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav aria-label="Main navigation">
+      <a href="index.html" class="logo" aria-label="NGO Impact Home">NGO Impact</a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="activities.html">Activities</a></li>
+        <li><a href="team.html">Team</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <div class="hamburger" id="hamburger" aria-label="Toggle navigation" tabindex="0">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>Building Sustainable Communities</h1>
+      <p>We empower local communities through education, environmental action, and inclusive development.</p>
+      <a href="activities.html" class="btn">Read Our Stories</a>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 NGO Impact. All rights reserved.</p>
+  </footer>
+
+  <script>
+    document.getElementById('hamburger').addEventListener('click', () => {
+      document.getElementById('navLinks').classList.toggle('active');
+    });
+    document.getElementById('hamburger').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        document.getElementById('navLinks').classList.toggle('active');
+      }
+    });
+  </script>
+</body>
+</html>
