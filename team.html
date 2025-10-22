@@ -93,27 +93,38 @@
     // Fetch all team member files
     async function loadTeamMembers() {
       try {
-        // List all files in content/team/
-        // Since we can't list directory in static hosting, we rely on known filenames
-        // Alternative: generate a team.json during build (but you want pure static + PagesCMS)
-        // Workaround: PagesCMS can output a team.json — but per your request, we avoid build step.
-        // So: we assume team member slugs are known or fetch via a manifest.
+        // In a real scenario, you'd fetch from a generated JSON file or list directory via a build step.
+        // For this static example, we'll hardcode known slugs or fetch them via a different method if possible.
+        // Let's assume we have a way to get the list of slugs (e.g., via a build script or a JSON index).
 
-        // ✅ Simple solution: PagesCMS can auto-generate `data/team.json` on commit.
-        // But to keep 100% client-side + editable, we change strategy:
+        // For now, simulate fetching known team members based on expected filenames.
+        const knownSlugs = ['ayesha-rahman', 'rafiqul-islam']; // This would ideally be dynamic
+        const members = [];
 
-        // 🔄 NEW: We will use `fetch` on each possible file? Not scalable.
+        for (const slug of knownSlugs) {
+          try {
+            const res = await fetch(`content/team/${slug}.md`);
+            if (!res.ok) continue; // Skip if file not found
+            const md = await res.text();
 
-        // 💡 BETTER: Let PagesCMS generate `data/team.json` automatically from content/team/
-        // → Update README to instruct user to enable this in PagesCMS.
-
-        // For now, we simulate by fetching a generated `data/team.json`
-        // (which PagesCMS can maintain via Git hook or build plugin)
-
-        const res = await fetch('data/team.json');
-        if (!res.ok) throw new Error('Team data not found. Ensure PagesCMS generates data/team.json from content/team/.');
-
-        const members = await res.json();
+            // Parse frontmatter (simplified)
+            const frontmatterMatch = md.match(/---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)/);
+            if (frontmatterMatch) {
+              const [, yaml, content] = frontmatterMatch;
+              const meta = {};
+              yaml.split('\n').forEach(line => {
+                if (line.includes(':')) {
+                  const [key, ...valueParts] = line.split(':');
+                  const value = valueParts.join(':').trim().replace(/^['"]|['"]$/g, '');
+                  meta[key.trim()] = value;
+                }
+              });
+              members.push({ slug, ...meta, content });
+            }
+          } catch (e) {
+            console.error(`Error loading team member ${slug}:`, e);
+          }
+        }
 
         const container = document.getElementById('teamContainer');
         if (members.length === 0) {
@@ -122,7 +133,7 @@
         }
 
         // Sort by `order` if available
-        members.sort((a, b) => (a.order || 999) - (b.order || 999));
+        members.sort((a, b) => (parseInt(a.order) || 999) - (parseInt(b.order) || 999));
 
         container.innerHTML = members.map(m => `
           <div class="member" role="article">

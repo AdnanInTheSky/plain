@@ -3,58 +3,155 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Loading Article</title>
+  <title>Loading Article | NGO Impact</title>
+  <meta name="description" content="Article content"/>
+  <script type="application/ld+json" id="json-ld"></script>
   <style>
-    body { font-family: sans-serif; line-height: 1.6; padding: 2rem; max-width: 800px; margin: 0 auto; }
-    img { max-width: 100%; height: auto; }
+    :root { --green: #2e7d32; --blue: #1976d2; --light: #f5f5f5; --dark: #333; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; line-height: 1.6; color: var(--dark); background: var(--light); }
+    header { background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
+    nav { display: flex; justify-content: space-between; align-items: center; padding: 1rem; }
+    .logo { font-weight: bold; color: var(--green); font-size: 1.4rem; text-decoration: none; }
+    .nav-links { display: flex; gap: 1.5rem; list-style: none; }
+    .nav-links a { text-decoration: none; color: var(--dark); }
+    .hamburger { display: none; flex-direction: column; cursor: pointer; }
+    .hamburger span { width: 25px; height: 3px; background: var(--dark); margin: 3px 0; }
+    main { padding: 2rem 1rem; max-width: 800px; margin: 0 auto; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+    .article-header { margin-bottom: 2rem; text-align: center; }
+    .article-header h1 { font-size: 2rem; color: var(--green); margin-bottom: 0.5rem; }
+    .meta { color: #666; font-size: 0.95rem; margin-bottom: 1.5rem; }
+    .article-content { line-height: 1.8; }
+    .article-content img { max-width: 100%; height: auto; border-radius: 8px; margin: 1.5rem 0; }
+    .article-content h2 { margin: 1.8rem 0 1rem; color: var(--blue); }
+    .article-content p { margin-bottom: 1.2rem; }
+    footer { text-align: center; padding: 2rem 1rem; color: #666; border-top: 1px solid #eee; margin-top: 2rem; }
+    @media (max-width: 768px) {
+      .nav-links { display: none; position: absolute; top: 100%; left: 0; width: 100%; background: white; flex-direction: column; padding: 1rem; gap: 1rem; }
+      .nav-links.active { display: flex; }
+      .hamburger { display: flex; }
+    }
   </style>
 </head>
 <body>
-  <div id="content">Loading article...</div>
+  <header>
+    <nav aria-label="Main navigation">
+      <a href="index.html" class="logo">NGO Impact</a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="activities.html">Activities</a></li>
+        <li><a href="team.html">Team</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <div class="hamburger" id="hamburger" tabindex="0" aria-label="Toggle navigation">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <div id="articleContent">
+      <p>Loading article...</p>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 NGO Impact</p>
+  </footer>
 
   <script>
-    // Get slug from query param
-    const params = new URLSearchParams(location.search);
-    const slug = params.get('slug');
+    const hamburger = document.getElementById('hamburger');
+    const navLinks = document.getElementById('navLinks');
+    hamburger.addEventListener('click', () => navLinks.classList.toggle('active'));
+    hamburger.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        navLinks.classList.toggle('active');
+      }
+    });
 
-    if (!slug) {
-      document.getElementById('content').innerHTML = '<p>No article specified.</p>';
-    } else {
-      fetch(`content/articles/${slug}.md`)
-        .then(res => res.text())
-        .then(md => {
-          const parts = md.split(/---\s*/);
-          const yaml = parts[1] || '';
-          const body = parts.slice(2).join('---');
-
-          const meta = {};
-          yaml.split('\n').forEach(line => {
-            if (line.includes(':')) {
-              const [key, value] = line.split(':').map(s => s.trim());
-              meta[key] = value.replace(/^['"]|['"]$/g, '');
-            }
-          });
-
-          let html = body
-            .replace(/^### (.*$)/gm, '<h3>$1</h3>')
-            .replace(/^## (.*$)/gm, '<h2>$1</h2>')
-            .replace(/^# (.*$)/gm, '<h1>$1</h1>')
-            .replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1">')
-            .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>')
-            .replace(/^(?!<[h|p|img|a]).*$/gm, '<p>$&</p>');
-
-          document.title = meta.title || 'Article';
-          document.getElementById('content').innerHTML = `
-            <h1>${meta.title}</h1>
-            <p><em>${meta.date}</em></p>
-            <img src="${meta.image}" alt="${meta.title}" style="max-width:100%; margin:1rem 0;">
-            <div>${html}</div>
-          `;
+    function markdownToHtml(md) {
+      return md
+        .replace(/^###### (.*$)/gm, '<h6>$1</h6>')
+        .replace(/^##### (.*$)/gm, '<h5>$1</h5>')
+        .replace(/^#### (.*$)/gm, '<h4>$1</h4>')
+        .replace(/^### (.*$)/gm, '<h3>$1</h3>')
+        .replace(/^## (.*$)/gm, '<h2>$1</h2>')
+        .replace(/^# (.*$)/gm, '<h1>$1</h1>')
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" loading="lazy">')
+        .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
+        .replace(/^(-|\d+\.)\s+(.*$)/gm, '<li>$2</li>')
+        .replace(/(?:^|\n)(-|\d+\.)(.*?)(?=\n(?:-|\d+\.)|\n\n|$)/gs, (match, p1, p2) => {
+          const tag = p1 === '-' ? 'ul' : 'ol';
+          return `<${tag}>${match.trim().split('\n').map(line => line.replace(/^(?:-|\d+\.)\s+/, '<li>') + '</li>').join('')}</${tag}>`;
         })
-        .catch(err => {
-          document.getElementById('content').innerHTML = `<p>Error: ${err.message}</p>`;
-        });
+        .replace(/^(?!<[h|p|img|a|ul|ol|li]).*$/gm, '<p>$&</p>')
+        .replace(/\n{2,}/g, '\n');
     }
+
+    async function loadArticle() {
+      // Get slug from URL query parameter: article.html?slug=my-post
+      const urlParams = new URLSearchParams(window.location.search);
+      const slug = urlParams.get('slug');
+      if (!slug) {
+        document.getElementById('articleContent').innerHTML = '<p>Article slug not specified.</p>';
+        return;
+      }
+
+      try {
+        const res = await fetch(`content/articles/${slug}.md`);
+        if (!res.ok) throw new Error('Failed to load article content');
+
+        const md = await res.text();
+        const frontmatterMatch = md.match(/---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)/);
+        if (!frontmatterMatch) throw new Error('Invalid markdown format: no frontmatter found');
+
+        const [, yaml, content] = frontmatterMatch;
+        const meta = {};
+        yaml.split('\n').forEach(line => {
+          if (line.includes(':')) {
+            const [key, ...valueParts] = line.split(':');
+            const value = valueParts.join(':').trim().replace(/^['"]|['"]$/g, '');
+            meta[key.trim()] = value;
+          }
+        });
+
+        const html = markdownToHtml(content);
+
+        // Update title & meta
+        document.title = `${meta.title} | NGO Impact`;
+        document.querySelector('meta[name="description"]').content = meta.excerpt;
+
+        // JSON-LD
+        const jsonLd = {
+          "@context": "https://schema.org",
+          "@type": "NewsArticle",
+          "headline": meta.title,
+          "datePublished": meta.date,
+          "image": meta.image,
+          "author": { "@type": "Organization", "name": "NGO Impact" },
+          "publisher": { "@type": "Organization", "name": "NGO Impact", "logo": { "@type": "ImageObject", "url": "https://yourdomain.com/logo.png" } }
+        };
+        document.getElementById('json-ld').textContent = JSON.stringify(jsonLd);
+
+        document.getElementById('articleContent').innerHTML = `
+          <div class="article-header">
+            <h1>${meta.title}</h1>
+            <div class="meta">${meta.date} • ${meta.category}</div>
+          </div>
+          <div class="article-content">${html}</div>
+        `;
+      } catch (err) {
+        document.getElementById('articleContent').innerHTML = `<p>Error loading article: ${err.message}</p>`;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadArticle);
   </script>
 </body>
 </html>
