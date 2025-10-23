@@ -4,12 +4,11 @@ media:
   extensions: [jpg, jpeg, png, webp, gif]
 
 content:
-  # ===== ARTICLES (now identical to TEAM structure) =====
   - name: articles
     label: Articles
     type: collection
     path: content/articles
-    format: yaml-frontmatter
+    format: markdown
     filename: "{slug}.md"
     fields:
       - name: title
@@ -37,14 +36,7 @@ content:
         type: image
         media: true
         required: true
-      # ✅ ADD THIS: article body as a 'text' field (like 'bio' in team)
-      - name: body
-        label: Article Content
-        type: text
-        required: true
-        description: "Write your article content here (use Markdown syntax if desired)"
 
-  # ===== TEAM (unchanged, working) =====
   - name: team
     label: Team Members
     type: collection
