@@ -21,19 +21,17 @@ content:
         type: text
         required: true
       - name: date
-        type: date
+        type: string  # ← CHANGED FROM 'date' TO 'string'
         required: true
       - name: category
-        type: select
-        options:
-          - Environment
-          - Education
-          - Health
-          - Community
+        type: string  # ← CHANGED FROM 'select' TO 'string'
         required: true
       - name: image
         type: image
         media: true
+        required: true
+      - name: body
+        type: text
         required: true
 
   - name: team
