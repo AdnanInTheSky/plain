@@ -27,6 +27,7 @@
     .card-meta { color: #666; font-size: 0.9rem; margin-bottom: 0.8rem; }
     .card-content p { margin-bottom: 1rem; }
     .btn { display: inline-block; color: white; background: var(--blue); padding: 0.4rem 0.8rem; text-decoration: none; border-radius: 4px; font-size: 0.9rem; }
+    .loading { text-align: center; padding: 2rem; }
     footer { text-align: center; padding: 2rem 1rem; color: #666; border-top: 1px solid #eee; }
     @media (max-width: 768px) {
       .nav-links { display: none; position: absolute; top: 100%; left: 0; width: 100%; background: white; flex-direction: column; padding: 1rem; gap: 1rem; }
@@ -65,15 +66,14 @@
         <option value="Education">Education</option>
         <option value="Health">Health</option>
         <option value="Community">Community</option>
-        <option value="Other">Other</option>
       </select>
       <select id="sortOrder" aria-label="Sort articles">
         <option value="newest">Newest First</option>
         <option value="oldest">Oldest First</option>
       </select>
     </div>
-    <div class="articles-grid" id="articlesContainer" aria-live="polite">
-      <p>Loading articles...</p>
+    <div class="articles-grid" id="articlesContainer">
+      <p class="loading">Loading articles...</p>
     </div>
   </main>
 
@@ -93,57 +93,51 @@
       }
     });
 
-    // Simple markdown-to-HTML (basic)
-    function markdownToHtml(md) {
-      return md
-        .replace(/^### (.*$)/gm, '<h3>$1</h3>')
-        .replace(/^## (.*$)/gm, '<h2>$1</h2>')
-        .replace(/^# (.*$)/gm, '<h1>$1</h1>')
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" loading="lazy">')
-        .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>')
-        .replace(/^(?!<[h|p|img|a|ul|ol|li]).*$/gm, '<p>$&</p>');
+    // List of article slugs (in production, generate this via GitHub Action)
+    const KNOWN_SLUGS = [
+      'first-article',
+      'second-article',
+      'new01'
+      // Add new slugs here as you create articles
+    ];
+
+    // Parse frontmatter from markdown file
+    function parseFrontmatter(md) {
+      const parts = md.split(/---\s*\n/);
+      if (parts.length < 2) return null;
+      const yaml = parts[1];
+      const meta = {};
+      yaml.split('\n').forEach(line => {
+        if (line.includes(':')) {
+          const [key, ...valueParts] = line.split(':');
+          const value = valueParts.join(':').trim().replace(/^['"]|['"]$/g, '');
+          meta[key.trim()] = value;
+        }
+      });
+      return meta;
     }
 
     // Load and render articles
     async function loadArticles() {
+      const container = document.getElementById('articlesContainer');
+      
       try {
-        // In a real scenario, you'd fetch from a generated JSON file or list directory via a build step.
-        // For this static example, we'll hardcode known slugs or fetch them via a different method if possible.
-        // Let's assume we have a way to get the list of slugs (e.g., via a build script or a JSON index).
-
-        // For now, simulate fetching known articles based on expected filenames.
-        const knownSlugs = ['first-article', 'second-article']; // This would ideally be dynamic
         const articles = [];
-
-        for (const slug of knownSlugs) {
+        for (const slug of KNOWN_SLUGS) {
           try {
             const res = await fetch(`content/articles/${slug}.md`);
-            if (!res.ok) continue; // Skip if file not found
+            if (!res.ok) continue;
             const md = await res.text();
-
-            // Parse frontmatter (simplified)
-            const frontmatterMatch = md.match(/---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)/);
-            if (frontmatterMatch) {
-              const [, yaml, content] = frontmatterMatch;
-              const meta = {};
-              yaml.split('\n').forEach(line => {
-                if (line.includes(':')) {
-                  const [key, ...valueParts] = line.split(':');
-                  const value = valueParts.join(':').trim().replace(/^['"]|['"]$/g, '');
-                  meta[key.trim()] = value;
-                }
-              });
-              articles.push({ slug, ...meta, content });
-            }
+            const meta = parseFrontmatter(md);
+            if (meta) articles.push({ slug, ...meta });
           } catch (e) {
-            console.error(`Error loading article ${slug}:`, e);
+            console.warn(`Failed to load ${slug}:`, e);
           }
         }
 
         renderArticles(articles);
       } catch (err) {
-        document.getElementById('articlesContainer').innerHTML = `<p>Error loading articles: ${err.message}</p>`;
+        container.innerHTML = `<p class="loading">Error loading articles: ${err.message}</p>`;
       }
     }
 
